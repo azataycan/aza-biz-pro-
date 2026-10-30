@@ -7,7 +7,7 @@
   <meta name="description" content="AZA BIZ PRO — система управления бизнесом">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles.css?v=1.0.2">
   <title>AZA BIZ PRO</title>
 </head>
 <body>
@@ -27,7 +27,7 @@
   </div>
 
   <div id="app" class="app hidden">
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
       <div class="brand"><span class="brand-icon">A</span><div><strong>AZA BIZ <em>PRO</em></strong><small>BUSINESS OS</small></div></div>
       <div class="workspace-pill"><span class="dot"></span><span id="companyLabel">Мой магазин</span></div>
       <nav id="navigation">
@@ -40,10 +40,11 @@
       </nav>
       <div class="sidebar-bottom"><div class="plan"> <span class="gold-dot"></span><div><b>START DEMO</b><small>PHASE 1</small></div></div><button id="logoutBtn" class="logout">↪ <span data-i18n="logout">Выйти</span></button></div>
     </aside>
+    <div id="drawerBackdrop" class="drawer-backdrop" aria-hidden="true"></div>
 
     <main class="main">
       <header class="topbar">
-        <button class="mobile-menu" id="menuBtn" aria-label="Menu">☰</button>
+        <button class="mobile-menu" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-controls="sidebar">☰</button>
         <div><div class="eyebrow" data-i18n="workspace">BUSINESS WORKSPACE</div><div class="top-title" id="pageTitle">Обзор</div></div>
         <div class="top-actions"><button id="langBtn" class="lang-btn">KG</button><div class="avatar" id="avatar">A</div></div>
       </header>
@@ -94,6 +95,6 @@
   </div>
   <div id="modal" class="modal hidden"><div class="modal-card"><div class="modal-head"><h3 id="modalTitle"></h3><button id="closeModal" class="icon-btn">✕</button></div><div id="modalBody"></div></div></div>
   <div id="toast" class="toast"></div>
-  <script src="./app.js"></script>
+  <script src="./app.js?v=1.0.2"></script>
 </body>
 </html>

@@ -13,7 +13,27 @@ function tr(k){return (translations[state.lang]||translations.ru)[k]||k}
 function toast(msg){$("toast").textContent=msg;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2200)}
 function applyLang(){document.documentElement.lang=state.lang;document.querySelectorAll("[data-i18n]").forEach(el=>{let k=el.dataset.i18n;if(translations[state.lang][k])el.textContent=tr(k)});document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>el.placeholder=tr(el.dataset.i18nPlaceholder));$("langBtn").textContent=state.lang==="ru"?"KG":"RU";$("pageTitle").textContent=tr(document.querySelector(".nav-item.active")?.dataset.page||"dashboard")}
 function enter(){state.company=$("companyInput").value.trim()||state.company||"Мой магазин";state.owner=$("ownerInput").value.trim()||state.owner||"Азамат";localStorage.setItem(KEY,JSON.stringify(state));$("authScreen").classList.add("hidden");$("app").classList.remove("hidden");render()}
-function showPage(page){document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));$(page+"Page").classList.remove("hidden");document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.page===page));$("pageTitle").textContent=tr(page);$("sidebar").classList.remove("open");}
+function closeSidebar(){
+ const sidebar=$("sidebar"),backdrop=$("drawerBackdrop"),menuButton=$("menuBtn");
+ if(sidebar) sidebar.classList.remove("open");
+ if(backdrop) backdrop.classList.remove("visible");
+ if(menuButton) menuButton.setAttribute("aria-expanded","false");
+}
+function openSidebar(){
+ const sidebar=$("sidebar"),backdrop=$("drawerBackdrop"),menuButton=$("menuBtn");
+ if(sidebar) sidebar.classList.add("open");
+ if(backdrop) backdrop.classList.add("visible");
+ if(menuButton) menuButton.setAttribute("aria-expanded","true");
+}
+function showPage(page){
+ const target=$(page+"Page");
+ if(!target) return;
+ document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+ target.classList.remove("hidden");
+ document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+ $("pageTitle").textContent=tr(page);
+ closeSidebar();
+}
 function table(headers,rows){if(!rows.length)return `<div class="empty">—</div>`;return `<table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table>`}
 function render(){
  $("companyLabel").textContent=state.company;$("ownerLabel").textContent=state.owner;$("avatar").textContent=(state.owner||"A").slice(0,1).toUpperCase();
@@ -36,7 +56,12 @@ function closeModal(){$("modal").classList.add("hidden")}
 function addProduct(){modal(tr("addProduct"),`<label>Название товара</label><input id="mName" placeholder="Например, Микроволновка"><label>Категория</label><input id="mCategory" placeholder="Бытовая техника"><label>Цена (сом)</label><input id="mPrice" type="number" min="0" placeholder="1500"><label>Количество</label><input id="mStock" type="number" min="0" value="1"><button class="btn primary full" id="saveProduct">Сохранить товар</button>`);$("saveProduct").onclick=()=>{let name=$("mName").value.trim(),category=$("mCategory").value.trim()||"Без категории",price=Number($("mPrice").value),stock=Number($("mStock").value);if(!name||price<=0||stock<0){toast("Заполните корректно все поля");return}state.products.push({id:Date.now(),name,category,price,stock});closeModal();save();toast("Товар добавлен")}}
 function addCustomer(){modal(tr("addCustomer"),`<label>Имя клиента</label><input id="mCustomer" placeholder="Имя и фамилия"><label>Телефон</label><input id="mPhone" placeholder="+996 ..."><button class="btn primary full" id="saveCustomer">Сохранить клиента</button>`);$("saveCustomer").onclick=()=>{let name=$("mCustomer").value.trim(),phone=$("mPhone").value.trim();if(!name){toast("Укажите имя клиента");return}state.customers.push({id:Date.now(),name,phone});closeModal();save();toast("Клиент добавлен")}}
 $("enterBtn").onclick=enter;$("ownerInput").addEventListener("keydown",e=>{if(e.key==="Enter")enter()});
-$("navigation").addEventListener("click",e=>{let b=e.target.closest("[data-page]");if(b)showPage(b.dataset.page)});
+$("navigation").addEventListener("click",e=>{
+ const button=e.target.closest("button.nav-item[data-page]");
+ if(!button) return;
+ e.preventDefault();
+ showPage(button.dataset.page);
+});
 document.addEventListener("click",e=>{let go=e.target.closest("[data-go]");if(go)showPage(go.dataset.go);let dp=e.target.closest("[data-delete-product]");if(dp&&confirm("Удалить товар?")){state.products=state.products.filter(p=>p.id!=dp.dataset.deleteProduct);save()}let dc=e.target.closest("[data-delete-customer]");if(dc&&confirm("Удалить клиента?")){state.customers=state.customers.filter(c=>c.id!=dc.dataset.deleteCustomer);save()}});
 $("addProductBtn").onclick=addProduct;$("addCustomerBtn").onclick=addCustomer;$("closeModal").onclick=closeModal;$("modal").onclick=e=>{if(e.target===$("modal"))closeModal()};
 $("productSearch").oninput=renderProducts;$("categoryFilter").onchange=renderProducts;$("saleProduct").onchange=updateSaleTotal;$("saleQty").oninput=updateSaleTotal;
@@ -47,7 +72,15 @@ $("settingsCompany").addEventListener("focus",()=>{$("settingsCompany").value=st
 $("exportData").onclick=()=>{let blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="aza-biz-pro-backup.json";a.click();URL.revokeObjectURL(a.href)};
 $("resetData").onclick=()=>{if(confirm("Удалить локальные данные и вернуть демо?")){state=sample();save();toast("Демо восстановлено")}};
 $("logoutBtn").onclick=()=>{$("app").classList.add("hidden");$("authScreen").classList.remove("hidden")};
-$("menuBtn").onclick=()=>document.querySelector(".sidebar").classList.toggle("open");
-$("app").addEventListener("click",e=>{const sidebar=$("sidebar");if(window.matchMedia("(max-width:700px)").matches&&sidebar.classList.contains("open")&&!e.target.closest("#sidebar")&&!e.target.closest("#menuBtn"))sidebar.classList.remove("open")});
-if("serviceWorker"in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});
+$("menuBtn").addEventListener("click",()=>{
+ const sidebar=$("sidebar");
+ if(sidebar.classList.contains("open")) closeSidebar(); else openSidebar();
+});
+$("drawerBackdrop").addEventListener("click",closeSidebar);
+window.addEventListener("resize",()=>{if(window.innerWidth>700) closeSidebar()});
+if("serviceWorker" in navigator && location.protocol.startsWith("http")){
+ navigator.serviceWorker.register("./sw.js?v=1.0.2",{updateViaCache:"none"})
+  .then(reg=>reg.update().catch(()=>{}))
+  .catch(()=>{});
+}
 if(localStorage.getItem(KEY)){ $("authScreen").classList.add("hidden");$("app").classList.remove("hidden");render()}else{ $("companyInput").value=state.company;$("ownerInput").value=state.owner; }
