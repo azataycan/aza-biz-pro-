@@ -13,7 +13,7 @@ function tr(k){return (translations[state.lang]||translations.ru)[k]||k}
 function toast(msg){$("toast").textContent=msg;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2200)}
 function applyLang(){document.documentElement.lang=state.lang;document.querySelectorAll("[data-i18n]").forEach(el=>{let k=el.dataset.i18n;if(translations[state.lang][k])el.textContent=tr(k)});document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>el.placeholder=tr(el.dataset.i18nPlaceholder));$("langBtn").textContent=state.lang==="ru"?"KG":"RU";$("pageTitle").textContent=tr(document.querySelector(".nav-item.active")?.dataset.page||"dashboard")}
 function enter(){state.company=$("companyInput").value.trim()||state.company||"Мой магазин";state.owner=$("ownerInput").value.trim()||state.owner||"Азамат";localStorage.setItem(KEY,JSON.stringify(state));$("authScreen").classList.add("hidden");$("app").classList.remove("hidden");render()}
-function showPage(page){document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));$(page+"Page").classList.remove("hidden");document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.page===page));$("pageTitle").textContent=tr(page);$("sidebar")?.classList.remove("open");$("sidebar")?.classList.remove("open");}
+function showPage(page){document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));$(page+"Page").classList.remove("hidden");document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.page===page));$("pageTitle").textContent=tr(page);$("sidebar").classList.remove("open");}
 function table(headers,rows){if(!rows.length)return `<div class="empty">—</div>`;return `<table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table>`}
 function render(){
  $("companyLabel").textContent=state.company;$("ownerLabel").textContent=state.owner;$("avatar").textContent=(state.owner||"A").slice(0,1).toUpperCase();
@@ -48,5 +48,6 @@ $("exportData").onclick=()=>{let blob=new Blob([JSON.stringify(state,null,2)],{t
 $("resetData").onclick=()=>{if(confirm("Удалить локальные данные и вернуть демо?")){state=sample();save();toast("Демо восстановлено")}};
 $("logoutBtn").onclick=()=>{$("app").classList.add("hidden");$("authScreen").classList.remove("hidden")};
 $("menuBtn").onclick=()=>document.querySelector(".sidebar").classList.toggle("open");
+$("app").addEventListener("click",e=>{const sidebar=$("sidebar");if(window.matchMedia("(max-width:700px)").matches&&sidebar.classList.contains("open")&&!e.target.closest("#sidebar")&&!e.target.closest("#menuBtn"))sidebar.classList.remove("open")});
 if("serviceWorker"in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});
 if(localStorage.getItem(KEY)){ $("authScreen").classList.add("hidden");$("app").classList.remove("hidden");render()}else{ $("companyInput").value=state.company;$("ownerInput").value=state.owner; }
