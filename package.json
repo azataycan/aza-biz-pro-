@@ -8,7 +8,8 @@
     "deploy": "wrangler deploy",
     "db:create": "wrangler d1 create aza-biz-pro-db",
     "db:migrate:local": "wrangler d1 migrations apply aza-biz-pro-db --local",
-    "db:migrate:remote": "wrangler d1 migrations apply aza-biz-pro-db --remote"
+    "db:migrate:remote": "wrangler d1 migrations apply aza-biz-pro-db --remote",
+    "test:schema": "python tests/schema_smoke.py"
   },
   "devDependencies": {
     "wrangler": "^4.45.0"
