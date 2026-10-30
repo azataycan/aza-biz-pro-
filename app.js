@@ -1,86 +1,553 @@
-const KEY="azabizpro_phase1_v1";
-const $=id=>document.getElementById(id);
-const translations={
- ru:{workspace:"BUSINESS WORKSPACE",welcome:"Добро пожаловать",signInHint:"Войдите в демо-кабинет или создайте компанию.",companyName:"Название компании",yourName:"Ваше имя",enter:"Открыть кабинет",dashboard:"Обзор",products:"Товары",sales:"Продажи",customers:"Клиенты",finance:"Финансы",settings:"Настройки",logout:"Выйти",overview:"OVERVIEW",hello:"Здравствуйте",businessPulse:"Вот что происходит в вашем бизнесе сегодня.",newSale:"Новая продажа",revenueToday:"Выручка сегодня",orders:"Продажи",liveDemo:"● Демо-данные",allTime:"За всё время",productsInStock:"Товаров в каталоге",activeCatalog:"Активный каталог",customerBase:"В базе",recentSales:"Последние продажи",latestTransactions:"Недавние операции",viewAll:"Все продажи →",quickActions:"Быстрые действия",commonTasks:"Частые задачи",addProduct:"Добавить товар",addProductDesc:"Пополнить каталог",addCustomer:"Добавить клиента",addCustomerDesc:"Новая запись",openFinance:"Открыть финансы",financeDesc:"Доходы и расходы",phaseNotice:"AZA BIZ PRO · Первая версия",phaseNoticeText:"Это локальный MVP. Подключение серверной базы, резервного копирования и многопользовательского доступа запланировано на следующий этап.",productsHint:"Управляйте товарами и остатками.",searchProducts:"Поиск товара...",allCategories:"Все категории",salesHint:"Создайте продажу и сохраните операцию.",selectProduct:"Выберите товар",quantity:"Количество",total:"Итого",completeSale:"Подтвердить продажу",salesHistory:"История продаж",customersHint:"Контакты ваших покупателей.",financeHint:"Сводка по зарегистрированным продажам.",totalRevenue:"Общая выручка",totalTransactions:"Количество продаж",catalogValue:"Стоимость каталога",financeTransactions:"Финансовые операции",settingsHint:"Профиль рабочего пространства.",saveChanges:"Сохранить изменения",dataManagement:"Управление данными",dataHint:"Сделайте резервную копию или сбросьте демо-данные.",exportBackup:"Экспорт JSON",resetDemo:"Сбросить демо"},
- kg:{workspace:"БИЗНЕС БАШКАРУУ",welcome:"Кош келиңиз",signInHint:"Демо-кабинетке кириңиз же компания түзүңүз.",companyName:"Компаниянын аталышы",yourName:"Атыңыз",enter:"Кабинетке кирүү",dashboard:"Башкы бет",products:"Товарлар",sales:"Сатуулар",customers:"Кардарлар",finance:"Финансы",settings:"Жөндөөлөр",logout:"Чыгуу",overview:"ЖАЛПЫ КӨРСӨТКҮЧ",hello:"Саламатсызбы",businessPulse:"Бизнесиңиздеги бүгүнкү абал.",newSale:"Жаңы сатуу",revenueToday:"Бүгүнкү түшүм",orders:"Сатуулар",liveDemo:"● Демо маалымат",allTime:"Бардык убакыт",productsInStock:"Каталогдогу товарлар",activeCatalog:"Активдүү каталог",customerBase:"Базада",recentSales:"Акыркы сатуулар",latestTransactions:"Акыркы операциялар",viewAll:"Бардык сатуулар →",quickActions:"Тез аракеттер",commonTasks:"Көп колдонулган иштер",addProduct:"Товар кошуу",addProductDesc:"Каталогду толуктоо",addCustomer:"Кардар кошуу",addCustomerDesc:"Жаңы жазуу",openFinance:"Финансыларды ачуу",financeDesc:"Киреше жана чыгаша",phaseNotice:"AZA BIZ PRO · Биринчи версия",phaseNoticeText:"Бул локалдык MVP. Сервердик база, резервдик көчүрмө жана көп колдонуучулуу мүмкүнчүлүк кийинки этапта кошулат.",productsHint:"Товарларды жана калдыктарды башкарыңыз.",searchProducts:"Товар издөө...",allCategories:"Бардык категориялар",salesHint:"Сатууну түзүп, операцияны сактаңыз.",selectProduct:"Товарды тандаңыз",quantity:"Саны",total:"Жалпы",completeSale:"Сатууну ырастоо",salesHistory:"Сатуу тарыхы",customersHint:"Сатып алуучуларыңыздын байланыштары.",financeHint:"Катталган сатуулар боюнча маалымат.",totalRevenue:"Жалпы түшүм",totalTransactions:"Сатуулардын саны",catalogValue:"Каталогдун наркы",financeTransactions:"Финансылык операциялар",settingsHint:"Жумуш мейкиндигинин профили.",saveChanges:"Өзгөртүүлөрдү сактоо",dataManagement:"Маалыматтарды башкаруу",dataHint:"Көчүрмө жасаңыз же демо маалыматтарды тазалаңыз.",exportBackup:"JSON экспорт",resetDemo:"Демону тазалоо"}
-};
-const sample=()=>({company:"Мой Маркет",owner:"Азамат",lang:"ru",products:[{id:1,name:"Чайник электрический",category:"Бытовая техника",price:1850,stock:12},{id:2,name:"Набор посуды",category:"Посуда",price:1250,stock:8},{id:3,name:"Кастрюля 5 л",category:"Посуда",price:950,stock:20},{id:4,name:"Блендер",category:"Бытовая техника",price:2450,stock:5}],customers:[{id:1,name:"Айбек Осмонов",phone:"+996 700 000 001"},{id:2,name:"Нурзат Алиева",phone:"+996 555 000 002"}],sales:[]});
-let state=load();
-function load(){try{return JSON.parse(localStorage.getItem(KEY))||sample()}catch{return sample()}}
-function save(){localStorage.setItem(KEY,JSON.stringify(state));render()}
-function money(n){return new Intl.NumberFormat("ru-RU").format(n)+" сом"}
-function tr(k){return (translations[state.lang]||translations.ru)[k]||k}
-function toast(msg){$("toast").textContent=msg;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),2200)}
-function applyLang(){document.documentElement.lang=state.lang;document.querySelectorAll("[data-i18n]").forEach(el=>{let k=el.dataset.i18n;if(translations[state.lang][k])el.textContent=tr(k)});document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>el.placeholder=tr(el.dataset.i18nPlaceholder));$("langBtn").textContent=state.lang==="ru"?"KG":"RU";$("pageTitle").textContent=tr(document.querySelector(".nav-item.active")?.dataset.page||"dashboard")}
-function enter(){state.company=$("companyInput").value.trim()||state.company||"Мой магазин";state.owner=$("ownerInput").value.trim()||state.owner||"Азамат";localStorage.setItem(KEY,JSON.stringify(state));$("authScreen").classList.add("hidden");$("app").classList.remove("hidden");render()}
-function closeSidebar(){
- const sidebar=$("sidebar"),backdrop=$("drawerBackdrop"),menuButton=$("menuBtn");
- if(sidebar) sidebar.classList.remove("open");
- if(backdrop) backdrop.classList.remove("visible");
- if(menuButton) menuButton.setAttribute("aria-expanded","false");
-}
-function openSidebar(){
- const sidebar=$("sidebar"),backdrop=$("drawerBackdrop"),menuButton=$("menuBtn");
- if(sidebar) sidebar.classList.add("open");
- if(backdrop) backdrop.classList.add("visible");
- if(menuButton) menuButton.setAttribute("aria-expanded","true");
-}
-function showPage(page){
- const target=$(page+"Page");
- if(!target) return;
- document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
- target.classList.remove("hidden");
- document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
- $("pageTitle").textContent=tr(page);
- closeSidebar();
-}
-function table(headers,rows){if(!rows.length)return `<div class="empty">—</div>`;return `<table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table>`}
-function render(){
- $("companyLabel").textContent=state.company;$("ownerLabel").textContent=state.owner;$("avatar").textContent=(state.owner||"A").slice(0,1).toUpperCase();
- const revenue=state.sales.reduce((s,x)=>s+x.total,0),today=new Date().toDateString(),todayRev=state.sales.filter(x=>new Date(x.date).toDateString()===today).reduce((s,x)=>s+x.total,0);
- $("todayRevenue").textContent=money(todayRev);$("salesCount").textContent=state.sales.length;$("productCount").textContent=state.products.length;$("customerCount").textContent=state.customers.length;
- const saleRows=state.sales.slice().reverse().slice(0,5).map(s=>`<tr><td>${s.name}</td><td>${s.qty}</td><td>${money(s.total)}</td><td><span class="pill">OK</span></td></tr>`);
- $("recentSales").innerHTML=table(["Товар","Кол-во","Сумма","Статус"],saleRows);
- const cats=[...new Set(state.products.map(p=>p.category))];$("categoryFilter").innerHTML=`<option value="all">${tr("allCategories")}</option>`+cats.map(c=>`<option>${escapeHtml(c)}</option>`).join("");
- renderProducts();renderSales();renderCustomers();renderFinance();fillSaleProducts();applyLang();
-}
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function renderProducts(){let q=($("productSearch")?.value||"").toLowerCase(),cat=$("categoryFilter")?.value||"all";let list=state.products.filter(p=>(p.name+" "+p.category).toLowerCase().includes(q)&&(cat==="all"||p.category===cat));$("productsTable").innerHTML=table(["Товар","Категория","Цена","Остаток",""],list.map(p=>`<tr><td><b>${escapeHtml(p.name)}</b></td><td>${escapeHtml(p.category)}</td><td>${money(p.price)}</td><td>${p.stock}</td><td><button class="text-btn" data-delete-product="${p.id}">Удалить</button></td></tr>`))}
-function renderSales(){ $("salesTotalCount").textContent=state.sales.length;let rows=state.sales.slice().reverse().map(s=>`<tr><td>${new Date(s.date).toLocaleString()}</td><td>${escapeHtml(s.name)}</td><td>${s.qty}</td><td>${money(s.total)}</td></tr>`);$("salesTable").innerHTML=table(["Дата","Товар","Кол-во","Сумма"],rows)}
-function renderCustomers(){$("customersTable").innerHTML=table(["Имя","Телефон",""],state.customers.map(c=>`<tr><td>${escapeHtml(c.name)}</td><td>${escapeHtml(c.phone)}</td><td><button class="text-btn" data-delete-customer="${c.id}">Удалить</button></td></tr>`))}
-function renderFinance(){let revenue=state.sales.reduce((s,x)=>s+x.total,0),catalog=state.products.reduce((s,p)=>s+p.price*p.stock,0);$("totalRevenue").textContent=money(revenue);$("totalTransactions").textContent=state.sales.length;$("catalogValue").textContent=money(catalog);$("financeTable").innerHTML=table(["Операция","Дата","Сумма"],state.sales.slice().reverse().map(s=>`<tr><td>Продажа · ${escapeHtml(s.name)}</td><td>${new Date(s.date).toLocaleString()}</td><td>${money(s.total)}</td></tr>`))}
-function fillSaleProducts(){let sel=$("saleProduct");sel.innerHTML=state.products.map(p=>`<option value="${p.id}">${escapeHtml(p.name)} — ${money(p.price)} (остаток ${p.stock})</option>`).join("");updateSaleTotal()}
-function updateSaleTotal(){let p=state.products.find(x=>x.id==$("saleProduct").value),qty=Math.max(1,Number($("saleQty").value)||1);$("saleTotal").textContent=money(p?p.price*qty:0)}
-function modal(title,body){$("modalTitle").textContent=title;$("modalBody").innerHTML=body;$("modal").classList.remove("hidden")}
-function closeModal(){$("modal").classList.add("hidden")}
-function addProduct(){modal(tr("addProduct"),`<label>Название товара</label><input id="mName" placeholder="Например, Микроволновка"><label>Категория</label><input id="mCategory" placeholder="Бытовая техника"><label>Цена (сом)</label><input id="mPrice" type="number" min="0" placeholder="1500"><label>Количество</label><input id="mStock" type="number" min="0" value="1"><button class="btn primary full" id="saveProduct">Сохранить товар</button>`);$("saveProduct").onclick=()=>{let name=$("mName").value.trim(),category=$("mCategory").value.trim()||"Без категории",price=Number($("mPrice").value),stock=Number($("mStock").value);if(!name||price<=0||stock<0){toast("Заполните корректно все поля");return}state.products.push({id:Date.now(),name,category,price,stock});closeModal();save();toast("Товар добавлен")}}
-function addCustomer(){modal(tr("addCustomer"),`<label>Имя клиента</label><input id="mCustomer" placeholder="Имя и фамилия"><label>Телефон</label><input id="mPhone" placeholder="+996 ..."><button class="btn primary full" id="saveCustomer">Сохранить клиента</button>`);$("saveCustomer").onclick=()=>{let name=$("mCustomer").value.trim(),phone=$("mPhone").value.trim();if(!name){toast("Укажите имя клиента");return}state.customers.push({id:Date.now(),name,phone});closeModal();save();toast("Клиент добавлен")}}
-$("enterBtn").onclick=enter;$("ownerInput").addEventListener("keydown",e=>{if(e.key==="Enter")enter()});
-$("navigation").addEventListener("click",e=>{
- const button=e.target.closest("button.nav-item[data-page]");
- if(!button) return;
- e.preventDefault();
- showPage(button.dataset.page);
-});
-document.addEventListener("click",e=>{let go=e.target.closest("[data-go]");if(go)showPage(go.dataset.go);let dp=e.target.closest("[data-delete-product]");if(dp&&confirm("Удалить товар?")){state.products=state.products.filter(p=>p.id!=dp.dataset.deleteProduct);save()}let dc=e.target.closest("[data-delete-customer]");if(dc&&confirm("Удалить клиента?")){state.customers=state.customers.filter(c=>c.id!=dc.dataset.deleteCustomer);save()}});
-$("addProductBtn").onclick=addProduct;$("addCustomerBtn").onclick=addCustomer;$("closeModal").onclick=closeModal;$("modal").onclick=e=>{if(e.target===$("modal"))closeModal()};
-$("productSearch").oninput=renderProducts;$("categoryFilter").onchange=renderProducts;$("saleProduct").onchange=updateSaleTotal;$("saleQty").oninput=updateSaleTotal;
-$("completeSale").onclick=()=>{let p=state.products.find(x=>x.id==$("saleProduct").value),qty=Math.max(1,Number($("saleQty").value)||1);if(!p||p.stock<qty){toast("Недостаточно товара на складе");return}p.stock-=qty;state.sales.push({id:Date.now(),name:p.name,qty,total:p.price*qty,date:new Date().toISOString()});$("saleQty").value=1;save();toast("Продажа сохранена")};
-$("langBtn").onclick=()=>{state.lang=state.lang==="ru"?"kg":"ru";save()};
-$("saveSettings").onclick=()=>{state.company=$("settingsCompany").value.trim()||state.company;state.owner=$("settingsOwner").value.trim()||state.owner;save();toast("Настройки сохранены")};
-$("settingsCompany").addEventListener("focus",()=>{$("settingsCompany").value=state.company});$("settingsOwner").addEventListener("focus",()=>{$("settingsOwner").value=state.owner});
-$("exportData").onclick=()=>{let blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="aza-biz-pro-backup.json";a.click();URL.revokeObjectURL(a.href)};
-$("resetData").onclick=()=>{if(confirm("Удалить локальные данные и вернуть демо?")){state=sample();save();toast("Демо восстановлено")}};
-$("logoutBtn").onclick=()=>{$("app").classList.add("hidden");$("authScreen").classList.remove("hidden")};
-$("menuBtn").addEventListener("click",()=>{
- const sidebar=$("sidebar");
- if(sidebar.classList.contains("open")) closeSidebar(); else openSidebar();
-});
-$("drawerBackdrop").addEventListener("click",closeSidebar);
-window.addEventListener("resize",()=>{if(window.innerWidth>700) closeSidebar()});
-if("serviceWorker" in navigator && location.protocol.startsWith("http")){
- navigator.serviceWorker.register("./sw.js?v=1.0.2",{updateViaCache:"none"})
-  .then(reg=>reg.update().catch(()=>{}))
-  .catch(()=>{});
-}
-if(localStorage.getItem(KEY)){ $("authScreen").classList.add("hidden");$("app").classList.remove("hidden");render()}else{ $("companyInput").value=state.company;$("ownerInput").value=state.owner; }
+(() => {
+  "use strict";
+
+  const $ = (id) => document.getElementById(id);
+  const API_BASE = String(window.AZA_API_BASE || "").replace(/\/$/, "");
+  const TOKEN_KEY = "aza_biz_pro_session_v2";
+  const LANG_KEY = "aza_biz_pro_language";
+  const state = {
+    token: sessionStorage.getItem(TOKEN_KEY) || "",
+    user: null,
+    business: null,
+    products: [],
+    customers: [],
+    sales: [],
+    expenses: [],
+    stats: null,
+    cart: [],
+    lang: localStorage.getItem(LANG_KEY) || "ru",
+    authMode: "login",
+    busy: false
+  };
+
+  const words = {
+    ru: {
+      dashboard: "Обзор", products: "Товары", sales: "Продажи / Касса", customers: "Клиенты", finance: "Финансы", expenses: "Расходы", settings: "Настройки",
+      welcome: "Добро пожаловать", signIn: "Войти", create: "Создать компанию", today: "Ваш бизнес сегодня", newSale: "Новая продажа", logout: "Выйти из аккаунта",
+      loading: "Загрузка данных…", saved: "Сохранено", failed: "Не удалось выполнить операцию", noData: "Пока нет данных", cloud: "Облачная синхронизация"
+    },
+    kg: {
+      dashboard: "Башкы бет", products: "Товарлар", sales: "Сатуу / Касса", customers: "Кардарлар", finance: "Финансы", expenses: "Чыгымдар", settings: "Жөндөөлөр",
+      welcome: "Кош келиңиз", signIn: "Кирүү", create: "Компания түзүү", today: "Бизнесиңиздин бүгүнкү абалы", newSale: "Жаңы сатуу", logout: "Аккаунттан чыгуу",
+      loading: "Маалымат жүктөлүүдө…", saved: "Сакталды", failed: "Аракет аткарылган жок", noData: "Азырынча маалымат жок", cloud: "Булуттагы синхрондоштуруу"
+    }
+  };
+  const tr = (key) => (words[state.lang] && words[state.lang][key]) || words.ru[key] || key;
+
+  function apiConfigured() {
+    return API_BASE && !API_BASE.includes("YOUR-WORKER-NAME") && /^https:\/\//i.test(API_BASE);
+  }
+
+  function toast(message, type = "success") {
+    const el = $("toast");
+    el.textContent = message;
+    el.dataset.type = type;
+    el.classList.add("show");
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => el.classList.remove("show"), 2600);
+  }
+
+  function setMessage(message, success = false) {
+    const el = $("authMessage");
+    el.textContent = message || "";
+    el.classList.toggle("success", Boolean(success));
+  }
+
+  function money(value) {
+    return new Intl.NumberFormat(state.lang === "kg" ? "ky-KG" : "ru-RU", { maximumFractionDigits: 0 }).format(Number(value) || 0) + " сом";
+  }
+
+  function esc(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+  }
+
+  async function request(path, options = {}) {
+    if (!apiConfigured()) throw new Error("API_NOT_CONFIGURED");
+    const headers = new Headers(options.headers || {});
+    headers.set("Accept", "application/json");
+    if (options.body !== undefined) headers.set("Content-Type", "application/json");
+    if (state.token) headers.set("Authorization", `Bearer ${state.token}`);
+    let response;
+    try {
+      response = await fetch(`${API_BASE}${path}`, {
+        method: options.method || "GET",
+        headers,
+        body: options.body === undefined ? undefined : JSON.stringify(options.body),
+        cache: "no-store"
+      });
+    } catch {
+      throw new Error("Серверге туташуу жок. Интернетти жана API дарегин текшериңиз.");
+    }
+    let payload = {};
+    try { payload = await response.json(); } catch { /* non-JSON response */ }
+    if (!response.ok) {
+      if (response.status === 401 && state.token && !path.startsWith("/api/auth/")) {
+        clearSession(); showAuth();
+      }
+      throw new Error(payload.error || payload.message || `Сервер катасы (${response.status})`);
+    }
+    return payload;
+  }
+
+  function showAuth() {
+    $("bootScreen").classList.add("hidden");
+    $("app").classList.add("hidden");
+    $("authScreen").classList.remove("hidden");
+    setAuthMode(state.authMode);
+    if (!apiConfigured()) {
+      setMessage("Система Cloudflare API менен туташтырыла элек. Алгач api-config.js файлына Worker дарегин жазыңыз.");
+      $("authSubmit").disabled = true;
+      $("authSubmit").style.opacity = ".5";
+    } else {
+      $("authSubmit").disabled = false;
+      $("authSubmit").style.opacity = "1";
+    }
+    applyLanguage();
+  }
+
+  function showApp() {
+    $("bootScreen").classList.add("hidden");
+    $("authScreen").classList.add("hidden");
+    $("app").classList.remove("hidden");
+    closeSidebar();
+  }
+
+  function clearSession() {
+    state.token = "";
+    state.user = null;
+    state.business = null;
+    sessionStorage.removeItem(TOKEN_KEY);
+  }
+
+  function setAuthMode(mode) {
+    state.authMode = mode === "register" ? "register" : "login";
+    const isRegister = state.authMode === "register";
+    document.querySelectorAll("[data-auth-mode]").forEach((button) => button.classList.toggle("active", button.dataset.authMode === state.authMode));
+    $("registerFields").classList.toggle("hidden", !isRegister);
+    $("authTitle").textContent = isRegister ? "Создайте рабочее пространство" : "С возвращением";
+    $("authSubtitle").textContent = isRegister ? "Зарегистрируйте компанию и аккаунт владельца." : "Войдите в свой рабочий кабинет.";
+    $("passwordInput").autocomplete = isRegister ? "new-password" : "current-password";
+    $("passwordInput").placeholder = isRegister ? "Не менее 10 символов" : "Ваш пароль";
+    $("authSubmit").querySelector("span").textContent = isRegister ? "Создать аккаунт" : "Войти в AZA BIZ PRO";
+    setMessage("");
+  }
+
+  async function handleAuth(event) {
+    event.preventDefault();
+    if (!apiConfigured() || state.busy) return;
+    const email = $("emailInput").value.trim().toLowerCase();
+    const password = $("passwordInput").value;
+    const body = { email, password };
+    if (state.authMode === "register") {
+      body.companyName = $("companyInput").value.trim();
+      body.ownerName = $("ownerInput").value.trim();
+      if (!body.companyName || !body.ownerName) return setMessage("Укажите название компании и имя владельца.");
+      if (password.length < 10) return setMessage("Пароль должен содержать не менее 10 символов.");
+    }
+    state.busy = true;
+    const button = $("authSubmit");
+    button.disabled = true;
+    button.querySelector("span").textContent = "Подключение…";
+    setMessage("");
+    try {
+      const result = await request(state.authMode === "register" ? "/api/auth/register" : "/api/auth/login", { method: "POST", body });
+      state.token = result.token;
+      sessionStorage.setItem(TOKEN_KEY, state.token);
+      state.user = result.user;
+      state.business = result.business;
+      await loadWorkspace();
+      showApp();
+      toast(state.authMode === "register" ? "Компания создана" : "Вы вошли в аккаунт");
+    } catch (error) {
+      setMessage(error.message || tr("failed"));
+    } finally {
+      state.busy = false;
+      button.disabled = false;
+      button.querySelector("span").textContent = state.authMode === "register" ? "Создать аккаунт" : "Войти в AZA BIZ PRO";
+    }
+  }
+
+  async function restoreSession() {
+    if (!apiConfigured()) return showAuth();
+    if (!state.token) return showAuth();
+    try {
+      const result = await request("/api/auth/me");
+      state.user = result.user;
+      state.business = result.business;
+      await loadWorkspace();
+      showApp();
+    } catch {
+      clearSession();
+      showAuth();
+    }
+  }
+
+  async function loadWorkspace() {
+    setSync("Загрузка данных…", true);
+    const [products, customers, sales, expenses, stats] = await Promise.all([
+      request("/api/products?limit=500"), request("/api/customers?limit=500"),
+      request("/api/sales?limit=100"), request("/api/expenses?limit=100"), request("/api/stats")
+    ]);
+    state.products = products.products || [];
+    state.customers = customers.customers || [];
+    state.sales = sales.sales || [];
+    state.expenses = expenses.expenses || [];
+    state.stats = stats;
+    renderAll();
+    setSync("Данные синхронизированы", false);
+  }
+
+  function setSync(text, pending) {
+    $("syncLabel").textContent = text;
+    $("syncLabel").style.color = pending ? "var(--gold2)" : "#7fb69e";
+  }
+
+  function renderAll() {
+    if (!state.user || !state.business) return;
+    const name = state.user.name || "Пользователь";
+    const initial = name.trim().slice(0, 1).toUpperCase() || "A";
+    $("companyLabel").textContent = state.business.name;
+    $("accountName").textContent = name;
+    $("accountEmail").textContent = state.user.email;
+    $("ownerLabel").textContent = name.split(" ")[0];
+    $("accountAvatar").textContent = initial;
+    $("topAvatar").textContent = initial;
+    $("navProductCount").textContent = state.products.length;
+    $("settingsCompany").value = state.business.name || "";
+    $("settingsOwner").value = name;
+    $("settingsEmail").value = state.user.email || "";
+    renderDashboard(); renderProducts(); renderCustomers(); renderSales(); renderExpenses(); renderFinance();
+    applyLanguage();
+  }
+
+  function table(headers, rows, emptyText = "Пока нет данных") {
+    if (!rows.length) return `<div class="empty-table">${esc(emptyText)}</div>`;
+    return `<table><thead><tr>${headers.map((header) => `<th>${header}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table>`;
+  }
+
+  function dateLabel(value, withTime = false) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "—";
+    return new Intl.DateTimeFormat(state.lang === "kg" ? "ky-KG" : "ru-RU", withTime ? { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" } : { day: "2-digit", month: "short" }).format(date);
+  }
+
+  function renderDashboard() {
+    const stats = state.stats || {};
+    $("todayRevenue").textContent = money(stats.todayRevenue || 0);
+    $("todayOrders").textContent = `${stats.todaySalesCount || 0} продаж сегодня`;
+    $("salesCount").textContent = stats.salesCount || 0;
+    $("productCount").textContent = stats.productCount || 0;
+    $("customerCount").textContent = stats.customerCount || 0;
+    $("lowStockCount").textContent = `${stats.lowStockCount || 0} позиций требуют внимания`;
+    const recent = state.sales.slice(0, 6).map((sale) => `<tr><td><div class="cell-title">${esc(sale.receipt_no || sale.id.slice(0, 8))}</div><div class="cell-sub">${dateLabel(sale.created_at, true)}</div></td><td>${esc(sale.customer_name || "Розничный покупатель")}</td><td class="money-cell">${money(sale.total)}</td><td><span class="status-pill">Завершено</span></td></tr>`);
+    $("recentSales").innerHTML = table(["ЧЕК / ДАТА", "КЛИЕНТ", "СУММА", "СТАТУС"], recent, "Продаж пока нет. Первая продажа появится здесь.");
+    const low = state.products.filter((p) => Number(p.stock) <= Number(p.min_stock)).sort((a, b) => a.stock - b.stock).slice(0, 5);
+    $("lowStockList").innerHTML = low.length ? low.map((p) => `<div class="low-stock-item"><div><b>${esc(p.name)}</b><small>${esc(p.sku || "Без артикула")}</small></div><span class="low-stock-qty">${Number(p.stock)} шт.</span></div>`).join("") : `<div class="empty-state">Нет товаров с низким остатком</div>`;
+    renderSalesChart(stats.dailySales || []);
+  }
+
+  function renderSalesChart(days) {
+    const chart = $("salesChart");
+    if (!days.length || !days.some((day) => Number(day.total) > 0)) {
+      chart.innerHTML = `<div class="chart-empty">Пока нет продаж за выбранный период</div>`;
+      return;
+    }
+    const max = Math.max(1, ...days.map((day) => Number(day.total) || 0));
+    chart.innerHTML = days.map((day) => {
+      const amount = Number(day.total) || 0;
+      const height = amount ? Math.max(7, amount / max * 100) : 2;
+      const label = new Date(`${day.day}T12:00:00`).toLocaleDateString(state.lang === "kg" ? "ky-KG" : "ru-RU", { weekday: "short" });
+      return `<div class="chart-bar-wrap" title="${money(amount)}"><div class="chart-bar" style="height:${height}%"></div><small>${esc(label)}</small></div>`;
+    }).join("");
+  }
+
+  function renderProducts() {
+    const query = ($("productSearch")?.value || "").trim().toLowerCase();
+    const filter = $("stockFilter")?.value || "all";
+    const rows = state.products.filter((product) => {
+      const matches = `${product.name} ${product.sku || ""} ${product.category || ""}`.toLowerCase().includes(query);
+      const stock = Number(product.stock), min = Number(product.min_stock);
+      return matches && (filter === "all" || (filter === "low" && stock > 0 && stock <= min) || (filter === "out" && stock <= 0));
+    }).map((product) => {
+      const stock = Number(product.stock), min = Number(product.min_stock);
+      const status = stock <= 0 ? `<span class="status-pill status-out">Нет в наличии</span>` : stock <= min ? `<span class="status-pill status-low">Низкий остаток</span>` : `<span class="status-pill">В наличии</span>`;
+      return `<tr><td><div class="cell-title">${esc(product.name)}</div><div class="cell-sub">${esc(product.sku || "Без артикула")}</div></td><td>${esc(product.category || "Без категории")}</td><td class="money-cell">${money(product.price)}</td><td>${stock} шт.</td><td>${status}</td><td><div class="row-actions"><button class="table-action" data-edit-product="${esc(product.id)}">Изменить</button><button class="table-action danger" data-delete-product="${esc(product.id)}">Архив</button></div></td></tr>`;
+    });
+    $("productsTable").innerHTML = table(["ТОВАР", "КАТЕГОРИЯ", "ЦЕНА", "ОСТАТОК", "СТАТУС", "ДЕЙСТВИЯ"], rows, "Каталог пуст. Добавьте первый товар.");
+    $("productResultCount").textContent = `${rows.length} товаров`;
+    renderPosProducts();
+  }
+
+  function renderCustomers() {
+    const query = ($("customerSearch")?.value || "").trim().toLowerCase();
+    const filtered = state.customers.filter((customer) => `${customer.name} ${customer.phone || ""} ${customer.email || ""}`.toLowerCase().includes(query));
+    const rows = filtered.map((customer) => `<tr><td><div class="cell-title">${esc(customer.name)}</div><div class="cell-sub">${esc(customer.email || "")}</div></td><td>${esc(customer.phone || "—")}</td><td>${dateLabel(customer.created_at)}</td><td><button class="table-action danger" data-delete-customer="${esc(customer.id)}">Удалить</button></td></tr>`);
+    $("customersTable").innerHTML = table(["КЛИЕНТ", "ТЕЛЕФОН", "ДОБАВЛЕН", "ДЕЙСТВИЯ"], rows, "Клиентов пока нет. Добавьте первую запись.");
+    $("customerResultCount").textContent = `${filtered.length} клиентов`;
+    const current = $("saleCustomer").value;
+    $("saleCustomer").innerHTML = `<option value="">Без привязки к клиенту</option>` + state.customers.map((customer) => `<option value="${esc(customer.id)}">${esc(customer.name)}${customer.phone ? ` · ${esc(customer.phone)}` : ""}</option>`).join("");
+    if (state.customers.some((c) => c.id === current)) $("saleCustomer").value = current;
+  }
+
+  function renderPosProducts() {
+    const current = $("posProduct").value;
+    const available = state.products.filter((product) => Number(product.stock) > 0);
+    $("posProduct").innerHTML = available.map((product) => `<option value="${esc(product.id)}">${esc(product.name)} · ${money(product.price)} · ${product.stock} шт.</option>`).join("");
+    if (available.some((p) => p.id === current)) $("posProduct").value = current;
+    if (!available.length) $("posProduct").innerHTML = `<option value="">Нет товаров в наличии</option>`;
+  }
+
+  function addCartItem() {
+    const id = $("posProduct").value;
+    const product = state.products.find((item) => item.id === id);
+    const qty = Number($("posQty").value);
+    if (!product) return toast("Сначала добавьте товар в каталог", "error");
+    if (!Number.isInteger(qty) || qty < 1) return toast("Укажите корректное количество", "error");
+    const existing = state.cart.find((item) => item.productId === id);
+    const nextQty = qty + (existing?.quantity || 0);
+    if (nextQty > Number(product.stock)) return toast("Количество превышает складской остаток", "error");
+    if (existing) existing.quantity = nextQty;
+    else state.cart.push({ productId: id, quantity: qty });
+    $("posQty").value = 1;
+    renderCart();
+  }
+
+  function renderCart() {
+    const lines = state.cart.map((item) => {
+      const product = state.products.find((p) => p.id === item.productId);
+      if (!product) return "";
+      return `<div class="cart-line"><div><b>${esc(product.name)}</b><small>${item.quantity} × ${money(product.price)}</small></div><strong>${money(item.quantity * product.price)}</strong><button class="cart-remove" data-remove-cart="${esc(item.productId)}" aria-label="Убрать">×</button></div>`;
+    }).join("");
+    $("cartItems").innerHTML = lines || `<div class="empty-state">Добавьте товар в чек</div>`;
+    const total = state.cart.reduce((sum, item) => {
+      const product = state.products.find((p) => p.id === item.productId);
+      return sum + (product ? Number(product.price) * item.quantity : 0);
+    }, 0);
+    $("cartTotal").textContent = money(total);
+    $("cartCount").textContent = `${state.cart.length} позиций`;
+  }
+
+  function renderSales() {
+    const rows = state.sales.map((sale) => `<tr><td><div class="cell-title">${esc(sale.receipt_no || sale.id.slice(0, 8))}</div><div class="cell-sub">${dateLabel(sale.created_at, true)}</div></td><td>${esc(sale.customer_name || "Розничный покупатель")}</td><td>${esc(paymentLabel(sale.payment_method))}</td><td>${Number(sale.items_count) || 0}</td><td class="money-cell">${money(sale.total)}</td></tr>`);
+    $("salesTable").innerHTML = table(["ЧЕК / ДАТА", "КЛИЕНТ", "ОПЛАТА", "ПОЗИЦИИ", "СУММА"], rows, "История продаж пока пуста.");
+    $("salesTotalCount").textContent = `${state.sales.length} операций`;
+    renderCart();
+  }
+
+  function paymentLabel(method) {
+    return ({ cash: "Наличные", qr: "QR", card: "Карта", transfer: "Перевод" })[method] || method || "—";
+  }
+
+  function renderExpenses() {
+    const rows = state.expenses.map((expense) => `<tr><td><div class="cell-title">${esc(expense.title)}</div><div class="cell-sub">${esc(expense.category || "Общее")}</div></td><td>${dateLabel(expense.created_at, true)}</td><td>${esc(expense.note || "—")}</td><td class="money-cell">${money(expense.amount)}</td><td><button class="table-action danger" data-delete-expense="${esc(expense.id)}">Удалить</button></td></tr>`);
+    $("expensesTable").innerHTML = table(["РАСХОД", "ДАТА", "ПРИМЕЧАНИЕ", "СУММА", ""], rows, "Расходов пока нет.");
+    $("expenseCount").textContent = `${state.expenses.length} операций`;
+  }
+
+  function renderFinance() {
+    const stats = state.stats || {};
+    const revenue = Number(stats.totalRevenue) || 0;
+    const expenses = Number(stats.totalExpenses) || 0;
+    const count = Number(stats.salesCount) || 0;
+    $("totalRevenue").textContent = money(revenue);
+    $("totalExpenses").textContent = money(expenses);
+    $("netResult").textContent = money(revenue - expenses);
+    $("averageCheck").textContent = money(count ? Math.round(revenue / count) : 0);
+    const entries = [
+      ...state.sales.map((item) => ({ type: "Продажа", label: item.receipt_no || "Продажа", date: item.created_at, amount: Number(item.total), positive: true })),
+      ...state.expenses.map((item) => ({ type: "Расход", label: item.title, date: item.created_at, amount: Number(item.amount), positive: false }))
+    ].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 30);
+    const rows = entries.map((item) => `<tr><td><div class="cell-title">${esc(item.label)}</div><div class="cell-sub">${item.type}</div></td><td>${dateLabel(item.date, true)}</td><td class="${item.positive ? "money-cell" : ""}">${item.positive ? "+" : "−"}${money(item.amount)}</td></tr>`);
+    $("financeTable").innerHTML = table(["ОПЕРАЦИЯ", "ДАТА", "СУММА"], rows, "Финансовых операций пока нет.");
+  }
+
+  function showPage(page) {
+    const target = $(`${page}Page`);
+    if (!target) return;
+    document.querySelectorAll(".page").forEach((section) => section.classList.add("hidden"));
+    target.classList.remove("hidden");
+    document.querySelectorAll(".nav-item").forEach((button) => button.classList.toggle("active", button.dataset.page === page));
+    const item = document.querySelector(`.nav-item[data-page="${page}"] span:not(.nav-icon)`);
+    $("pageTitle").textContent = item?.textContent || page;
+    closeSidebar();
+  }
+
+  function openSidebar() {
+    $("sidebar").classList.add("open");
+    $("drawerBackdrop").classList.add("visible");
+    $("menuBtn").setAttribute("aria-expanded", "true");
+  }
+  function closeSidebar() {
+    $("sidebar").classList.remove("open");
+    $("drawerBackdrop").classList.remove("visible");
+    $("menuBtn").setAttribute("aria-expanded", "false");
+  }
+
+  function openModal(title, html, onMount) {
+    $("modalTitle").textContent = title;
+    $("modalBody").innerHTML = html;
+    $("modal").classList.remove("hidden");
+    if (onMount) onMount();
+  }
+  function closeModal() { $("modal").classList.add("hidden"); }
+  function modalActions(cancelText = "Отмена", submitText = "Сохранить") {
+    return `<div class="modal-actions"><button type="button" class="btn secondary" id="modalCancel">${cancelText}</button><button type="submit" class="btn primary">${submitText}</button></div>`;
+  }
+
+  function productForm(product = null) {
+    const editing = Boolean(product);
+    openModal(editing ? "Изменить товар" : "Новый товар", `
+      <form id="productForm">
+        <label for="fProductName">Название товара</label><input class="form-control" id="fProductName" maxlength="120" required value="${esc(product?.name || "")}" placeholder="Например, Чайник электрический">
+        <div class="form-two"><div><label for="fProductSku">Артикул / SKU</label><input class="form-control" id="fProductSku" maxlength="60" value="${esc(product?.sku || "")}" placeholder="SKU-001"></div><div><label for="fProductCategory">Категория</label><input class="form-control" id="fProductCategory" maxlength="60" value="${esc(product?.category || "")}" placeholder="Посуда"></div></div>
+        <div class="form-two"><div><label for="fProductPrice">Цена продажи (сом)</label><input class="form-control" id="fProductPrice" type="number" min="1" max="100000000" step="1" required value="${product?.price ?? ""}"></div><div><label for="fProductCost">Себестоимость (сом)</label><input class="form-control" id="fProductCost" type="number" min="0" max="100000000" step="1" value="${product?.cost_price ?? 0}"></div></div>
+        <div class="form-two"><div><label for="fProductStock">Остаток (шт.)</label><input class="form-control" id="fProductStock" type="number" min="0" max="10000000" step="1" required value="${product?.stock ?? 0}"></div><div><label for="fProductMin">Мин. остаток</label><input class="form-control" id="fProductMin" type="number" min="0" max="10000000" step="1" value="${product?.min_stock ?? 2}"></div></div>
+        ${modalActions("Отмена", editing ? "Сохранить" : "Добавить товар")}
+      </form>`, () => {
+      $("modalCancel").onclick = closeModal;
+      $("productForm").onsubmit = async (event) => {
+        event.preventDefault();
+        const body = { name: $("fProductName").value.trim(), sku: $("fProductSku").value.trim(), category: $("fProductCategory").value.trim(), price: Number($("fProductPrice").value), costPrice: Number($("fProductCost").value || 0), stock: Number($("fProductStock").value), minStock: Number($("fProductMin").value || 0) };
+        try {
+          await request(editing ? `/api/products/${encodeURIComponent(product.id)}` : "/api/products", { method: editing ? "PATCH" : "POST", body });
+          closeModal(); await loadWorkspace(); toast(editing ? "Товар обновлён" : "Товар добавлен");
+        } catch (error) { toast(error.message, "error"); }
+      };
+    });
+  }
+
+  function customerForm() {
+    openModal("Новый клиент", `<form id="customerForm"><label for="fCustomerName">Имя и фамилия</label><input class="form-control" id="fCustomerName" maxlength="100" required placeholder="Имя покупателя"><label for="fCustomerPhone">Телефон</label><input class="form-control" id="fCustomerPhone" maxlength="30" placeholder="+996 ..."><label for="fCustomerEmail">Email (необязательно)</label><input class="form-control" id="fCustomerEmail" type="email" maxlength="190" placeholder="client@example.com">${modalActions()}</form>`, () => {
+      $("modalCancel").onclick = closeModal;
+      $("customerForm").onsubmit = async (event) => {
+        event.preventDefault();
+        try {
+          await request("/api/customers", { method: "POST", body: { name: $("fCustomerName").value.trim(), phone: $("fCustomerPhone").value.trim(), email: $("fCustomerEmail").value.trim() } });
+          closeModal(); await loadWorkspace(); toast("Клиент добавлен");
+        } catch (error) { toast(error.message, "error"); }
+      };
+    });
+  }
+
+  function expenseForm() {
+    openModal("Новый расход", `<form id="expenseForm"><label for="fExpenseTitle">Название расхода</label><input class="form-control" id="fExpenseTitle" maxlength="120" required placeholder="Аренда, доставка, упаковка…"><div class="form-two"><div><label for="fExpenseCategory">Категория</label><select class="form-control" id="fExpenseCategory"><option>Аренда</option><option>Зарплата</option><option>Доставка</option><option>Закупка</option><option>Коммунальные услуги</option><option>Реклама</option><option>Другое</option></select></div><div><label for="fExpenseAmount">Сумма (сом)</label><input class="form-control" id="fExpenseAmount" type="number" min="1" max="100000000" step="1" required></div></div><label for="fExpenseNote">Примечание</label><input class="form-control" id="fExpenseNote" maxlength="250" placeholder="Дополнительная информация">${modalActions()}</form>`, () => {
+      $("modalCancel").onclick = closeModal;
+      $("expenseForm").onsubmit = async (event) => {
+        event.preventDefault();
+        try {
+          await request("/api/expenses", { method: "POST", body: { title: $("fExpenseTitle").value.trim(), category: $("fExpenseCategory").value, amount: Number($("fExpenseAmount").value), note: $("fExpenseNote").value.trim() } });
+          closeModal(); await loadWorkspace(); toast("Расход сохранён");
+        } catch (error) { toast(error.message, "error"); }
+      };
+    });
+  }
+
+  async function completeSale() {
+    if (!state.cart.length) return toast("Добавьте товары в чек", "error");
+    const button = $("completeSale");
+    button.disabled = true;
+    try {
+      const result = await request("/api/sales", { method: "POST", body: {
+        items: state.cart.map((item) => ({ productId: item.productId, quantity: item.quantity })),
+        customerId: $("saleCustomer").value || null,
+        paymentMethod: $("paymentMethod").value
+      } });
+      state.cart = [];
+      await loadWorkspace();
+      toast(`Продажа проведена · ${money(result.sale.total)}`);
+      showPage("sales");
+    } catch (error) { toast(error.message, "error"); }
+    finally { button.disabled = false; }
+  }
+
+  async function deleteRecord(type, id) {
+    const map = { product: "/api/products/", customer: "/api/customers/", expense: "/api/expenses/" };
+    const messages = { product: "Переместить товар в архив?", customer: "Удалить клиента?", expense: "Удалить расход?" };
+    if (!window.confirm(messages[type] || "Подтвердить действие?")) return;
+    try {
+      await request(map[type] + encodeURIComponent(id), { method: "DELETE" });
+      await loadWorkspace(); toast("Изменения сохранены");
+    } catch (error) { toast(error.message, "error"); }
+  }
+
+  async function saveBusiness(event) {
+    event.preventDefault();
+    try {
+      const result = await request("/api/business", { method: "PATCH", body: { name: $("settingsCompany").value.trim(), ownerName: $("settingsOwner").value.trim() } });
+      state.business = result.business; state.user.name = result.user.name;
+      renderAll(); toast("Настройки сохранены");
+    } catch (error) { toast(error.message, "error"); }
+  }
+
+  function applyLanguage() {
+    document.documentElement.lang = state.lang === "kg" ? "ky" : "ru";
+    const label = state.lang === "ru" ? "KG" : "RU";
+    $("langBtn").textContent = label;
+    $("authLangBtn").textContent = label;
+    const labels = {
+      dashboard: "Обзор", products: "Товары", sales: "Продажи / Касса", customers: "Клиенты", finance: "Финансы", expenses: "Расходы", settings: "Настройки"
+    };
+    document.querySelectorAll(".nav-item").forEach((button) => {
+      const text = button.querySelector("span:not(.nav-icon):not(.nav-count)");
+      if (text) text.textContent = state.lang === "kg" ? words.kg[button.dataset.page] : labels[button.dataset.page];
+    });
+    $("logoutBtn").querySelector("span").textContent = tr("logout");
+    $("todayLabel").textContent = tr("today");
+    const active = document.querySelector(".nav-item.active");
+    if (active) $("pageTitle").textContent = active.querySelector("span:not(.nav-icon):not(.nav-count)")?.textContent || tr("dashboard");
+  }
+
+  async function logout() {
+    try { if (state.token) await request("/api/auth/logout", { method: "POST", body: {} }); } catch { /* local session is still cleared */ }
+    clearSession(); state.products = []; state.customers = []; state.sales = []; state.expenses = []; state.cart = [];
+    showAuth(); toast("Вы вышли из аккаунта");
+  }
+
+  function bindEvents() {
+    $("authForm").addEventListener("submit", handleAuth);
+    document.querySelectorAll("[data-auth-mode]").forEach((button) => button.addEventListener("click", () => setAuthMode(button.dataset.authMode)));
+    $("togglePassword").onclick = () => { const input = $("passwordInput"); input.type = input.type === "password" ? "text" : "password"; };
+    $("authLangBtn").onclick = $("langBtn").onclick = () => { state.lang = state.lang === "ru" ? "kg" : "ru"; localStorage.setItem(LANG_KEY, state.lang); applyLanguage(); };
+    $("navigation").addEventListener("click", (event) => { const button = event.target.closest("[data-page]"); if (button) showPage(button.dataset.page); });
+    document.addEventListener("click", (event) => {
+      const go = event.target.closest("[data-go]"); if (go) showPage(go.dataset.go);
+      const action = event.target.closest("[data-action]"); if (action?.dataset.action === "add-product") productForm(); if (action?.dataset.action === "add-customer") customerForm();
+      const editProduct = event.target.closest("[data-edit-product]"); if (editProduct) { const product = state.products.find((item) => item.id === editProduct.dataset.editProduct); if (product) productForm(product); }
+      const deleteProduct = event.target.closest("[data-delete-product]"); if (deleteProduct) deleteRecord("product", deleteProduct.dataset.deleteProduct);
+      const deleteCustomer = event.target.closest("[data-delete-customer]"); if (deleteCustomer) deleteRecord("customer", deleteCustomer.dataset.deleteCustomer);
+      const deleteExpense = event.target.closest("[data-delete-expense]"); if (deleteExpense) deleteRecord("expense", deleteExpense.dataset.deleteExpense);
+      const removeCart = event.target.closest("[data-remove-cart]"); if (removeCart) { state.cart = state.cart.filter((item) => item.productId !== removeCart.dataset.removeCart); renderCart(); }
+    });
+    $("addProductBtn").onclick = () => productForm();
+    $("addCustomerBtn").onclick = customerForm;
+    $("addExpenseBtn").onclick = expenseForm;
+    $("addToCartBtn").onclick = addCartItem;
+    $("completeSale").onclick = completeSale;
+    $("productSearch").oninput = renderProducts; $("stockFilter").onchange = renderProducts;
+    $("customerSearch").oninput = renderCustomers;
+    $("businessForm").onsubmit = saveBusiness;
+    $("logoutBtn").onclick = logout;
+    $("menuBtn").onclick = openSidebar;
+    $("closeSidebar").onclick = closeSidebar;
+    $("drawerBackdrop").onclick = closeSidebar;
+    $("closeModal").onclick = closeModal;
+    $("modal").onclick = (event) => { if (event.target === $("modal")) closeModal(); };
+    document.addEventListener("keydown", (event) => { if (event.key === "Escape") { closeModal(); closeSidebar(); } });
+  }
+
+  async function init() {
+    bindEvents();
+    state.lang = state.lang === "kg" ? "kg" : "ru";
+    applyLanguage();
+    if ("serviceWorker" in navigator && location.protocol === "https:") {
+      navigator.serviceWorker.register("./sw.js").catch((error) => console.warn("PWA service worker:", error));
+    }
+    await restoreSession();
+  }
+
+  init().catch((error) => {
+    console.error("AZA BIZ PRO initialization error:", error);
+    showAuth();
+    setMessage(error.message || "Не удалось запустить приложение.");
+  });
+})();

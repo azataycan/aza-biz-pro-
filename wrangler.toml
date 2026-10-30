@@ -1,0 +1,12 @@
+name = "aza-biz-pro-api"
+main = "backend/worker.js"
+compatibility_date = "2026-10-30"
+
+[vars]
+ALLOWED_ORIGINS = "https://azataycan.github.io"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "aza-biz-pro-db"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+migrations_dir = "backend/migrations"

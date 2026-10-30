@@ -1,0 +1,16 @@
+{
+  "name": "aza-biz-pro",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create aza-biz-pro-db",
+    "db:migrate:local": "wrangler d1 migrations apply aza-biz-pro-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply aza-biz-pro-db --remote"
+  },
+  "devDependencies": {
+    "wrangler": "^4.45.0"
+  }
+}
