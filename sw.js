@@ -1,10 +1,10 @@
-const CACHE_NAME = "aza-biz-pro-static-v2.0.1";
+const CACHE_NAME = "aza-biz-pro-static-v2.0.2";
 const STATIC_ASSETS = [
   "./",
   "./index.html",
-  "./styles.css?v=2.0.1",
-  "./api-config.js?v=2.0.1",
-  "./app.js?v=2.0.1",
+  "./styles.css?v=2.0.2",
+  "./api-config.js?v=2.0.2",
+  "./app.js?v=2.0.2",
   "./manifest.webmanifest",
   "./assets/icon.svg"
 ];
