@@ -1,0 +1,17 @@
+{
+  "name": "AZA BIZ PRO",
+  "short_name": "AZA BIZ",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#07111f",
+  "theme_color": "#081321",
+  "description": "Business management platform",
+  "icons": [
+    {
+      "src": "./assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

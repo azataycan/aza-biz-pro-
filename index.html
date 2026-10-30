@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#081321">
+  <meta name="description" content="AZA BIZ PRO — система управления бизнесом">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <title>AZA BIZ PRO</title>
+</head>
+<body>
+  <div id="authScreen" class="auth-wrap">
+    <div class="auth-card">
+      <div class="brand-mark">AZA<span> BIZ</span><b> PRO</b></div>
+      <p class="eyebrow" data-i18n="workspace">BUSINESS WORKSPACE</p>
+      <h1 data-i18n="welcome">Добро пожаловать</h1>
+      <p class="muted" data-i18n="signInHint">Войдите в демо-кабинет или создайте компанию.</p>
+      <label data-i18n="companyName">Название компании</label>
+      <input id="companyInput" placeholder="Мой магазин" autocomplete="organization">
+      <label data-i18n="yourName">Ваше имя</label>
+      <input id="ownerInput" placeholder="Азамат" autocomplete="name">
+      <button class="btn primary full" id="enterBtn" data-i18n="enter">Открыть кабинет</button>
+      <p class="tiny">Demo MVP · Данные сохраняются на этом устройстве</p>
+    </div>
+  </div>
+
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-icon">A</span><div><strong>AZA BIZ <em>PRO</em></strong><small>BUSINESS OS</small></div></div>
+      <div class="workspace-pill"><span class="dot"></span><span id="companyLabel">Мой магазин</span></div>
+      <nav id="navigation">
+        <button class="nav-item active" data-page="dashboard"><i>▦</i><span data-i18n="dashboard">Обзор</span></button>
+        <button class="nav-item" data-page="products"><i>▣</i><span data-i18n="products">Товары</span></button>
+        <button class="nav-item" data-page="sales"><i>▤</i><span data-i18n="sales">Продажи</span></button>
+        <button class="nav-item" data-page="customers"><i>♙</i><span data-i18n="customers">Клиенты</span></button>
+        <button class="nav-item" data-page="finance"><i>◈</i><span data-i18n="finance">Финансы</span></button>
+        <button class="nav-item" data-page="settings"><i>⚙</i><span data-i18n="settings">Настройки</span></button>
+      </nav>
+      <div class="sidebar-bottom"><div class="plan"> <span class="gold-dot"></span><div><b>START DEMO</b><small>PHASE 1</small></div></div><button id="logoutBtn" class="logout">↪ <span data-i18n="logout">Выйти</span></button></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="mobile-menu" id="menuBtn" aria-label="Menu">☰</button>
+        <div><div class="eyebrow" data-i18n="workspace">BUSINESS WORKSPACE</div><div class="top-title" id="pageTitle">Обзор</div></div>
+        <div class="top-actions"><button id="langBtn" class="lang-btn">KG</button><div class="avatar" id="avatar">A</div></div>
+      </header>
+      <div class="content">
+        <section id="dashboardPage" class="page">
+          <div class="welcome-row"><div><p class="eyebrow" data-i18n="overview">OVERVIEW</p><h1><span data-i18n="hello">Здравствуйте</span>, <span id="ownerLabel">Азамат</span> 👋</h1><p class="muted" data-i18n="businessPulse">Вот что происходит в вашем бизнесе сегодня.</p></div><button class="btn primary" data-go="sales">＋ <span data-i18n="newSale">Новая продажа</span></button></div>
+          <div class="stats-grid">
+            <article class="stat-card"><div class="stat-head"><span data-i18n="revenueToday">Выручка сегодня</span><span class="stat-icon">↗</span></div><strong id="todayRevenue">0 сом</strong><small class="positive" data-i18n="liveDemo">● Демо-данные</small></article>
+            <article class="stat-card"><div class="stat-head"><span data-i18n="orders">Продажи</span><span class="stat-icon">▤</span></div><strong id="salesCount">0</strong><small class="muted" data-i18n="allTime">За всё время</small></article>
+            <article class="stat-card"><div class="stat-head"><span data-i18n="productsInStock">Товаров в каталоге</span><span class="stat-icon">▣</span></div><strong id="productCount">0</strong><small class="muted" data-i18n="activeCatalog">Активный каталог</small></article>
+            <article class="stat-card"><div class="stat-head"><span data-i18n="customers">Клиенты</span><span class="stat-icon">♙</span></div><strong id="customerCount">0</strong><small class="muted" data-i18n="customerBase">В базе</small></article>
+          </div>
+          <div class="section-grid">
+            <article class="panel"><div class="panel-head"><div><h3 data-i18n="recentSales">Последние продажи</h3><p class="muted" data-i18n="latestTransactions">Недавние операции</p></div><button class="text-btn" data-go="sales" data-i18n="viewAll">Все продажи →</button></div><div id="recentSales" class="table-wrap"></div></article>
+            <article class="panel"><div class="panel-head"><div><h3 data-i18n="quickActions">Быстрые действия</h3><p class="muted" data-i18n="commonTasks">Частые задачи</p></div></div><div class="quick-actions"><button data-go="products"><span>＋</span><b data-i18n="addProduct">Добавить товар</b><small data-i18n="addProductDesc">Пополнить каталог</small></button><button data-go="customers"><span>♙</span><b data-i18n="addCustomer">Добавить клиента</b><small data-i18n="addCustomerDesc">Новая запись</small></button><button data-go="finance"><span>◈</span><b data-i18n="openFinance">Открыть финансы</b><small data-i18n="financeDesc">Доходы и расходы</small></button></div></article>
+          </div>
+          <div class="notice"><span>✦</span><div><b data-i18n="phaseNotice">AZA BIZ PRO · Первая версия</b><p data-i18n="phaseNoticeText">Это локальный MVP. Подключение серверной базы, резервного копирования и многопользовательского доступа запланировано на следующий этап.</p></div></div>
+        </section>
+
+        <section id="productsPage" class="page hidden">
+          <div class="page-heading"><div><p class="eyebrow">CATALOG</p><h1 data-i18n="products">Товары</h1><p class="muted" data-i18n="productsHint">Управляйте товарами и остатками.</p></div><button class="btn primary" id="addProductBtn">＋ <span data-i18n="addProduct">Добавить товар</span></button></div>
+          <div class="panel"><div class="toolbar"><input id="productSearch" placeholder="Поиск товара..." data-i18n-placeholder="searchProducts"><select id="categoryFilter"><option value="all" data-i18n="allCategories">Все категории</option></select></div><div id="productsTable" class="table-wrap"></div></div>
+        </section>
+
+        <section id="salesPage" class="page hidden">
+          <div class="page-heading"><div><p class="eyebrow">POINT OF SALE</p><h1 data-i18n="sales">Продажи</h1><p class="muted" data-i18n="salesHint">Создайте продажу и сохраните операцию.</p></div></div>
+          <div class="pos-grid"><article class="panel"><h3 data-i18n="newSale">Новая продажа</h3><label data-i18n="selectProduct">Выберите товар</label><select id="saleProduct"></select><label data-i18n="quantity">Количество</label><input id="saleQty" type="number" min="1" value="1"><div class="sale-total"><span data-i18n="total">Итого</span><strong id="saleTotal">0 сом</strong></div><button class="btn primary full" id="completeSale" data-i18n="completeSale">Подтвердить продажу</button></article><article class="panel"><div class="panel-head"><h3 data-i18n="salesHistory">История продаж</h3><span class="muted" id="salesTotalCount">0</span></div><div id="salesTable" class="table-wrap"></div></article></div>
+        </section>
+
+        <section id="customersPage" class="page hidden">
+          <div class="page-heading"><div><p class="eyebrow">CRM</p><h1 data-i18n="customers">Клиенты</h1><p class="muted" data-i18n="customersHint">Контакты ваших покупателей.</p></div><button class="btn primary" id="addCustomerBtn">＋ <span data-i18n="addCustomer">Добавить клиента</span></button></div>
+          <div class="panel"><div id="customersTable" class="table-wrap"></div></div>
+        </section>
+
+        <section id="financePage" class="page hidden">
+          <div class="page-heading"><div><p class="eyebrow">FINANCE</p><h1 data-i18n="finance">Финансы</h1><p class="muted" data-i18n="financeHint">Сводка по зарегистрированным продажам.</p></div></div>
+          <div class="stats-grid"><article class="stat-card"><div class="stat-head" data-i18n="totalRevenue">Общая выручка</div><strong id="totalRevenue">0 сом</strong></article><article class="stat-card"><div class="stat-head" data-i18n="totalTransactions">Количество продаж</div><strong id="totalTransactions">0</strong></article><article class="stat-card"><div class="stat-head" data-i18n="catalogValue">Стоимость каталога</div><strong id="catalogValue">0 сом</strong></article></div>
+          <div class="panel"><div class="panel-head"><h3 data-i18n="financeTransactions">Финансовые операции</h3></div><div id="financeTable" class="table-wrap"></div></div>
+        </section>
+
+        <section id="settingsPage" class="page hidden">
+          <div class="page-heading"><div><p class="eyebrow">PREFERENCES</p><h1 data-i18n="settings">Настройки</h1><p class="muted" data-i18n="settingsHint">Профиль рабочего пространства.</p></div></div>
+          <div class="panel settings-panel"><label data-i18n="companyName">Название компании</label><input id="settingsCompany"><label data-i18n="yourName">Ваше имя</label><input id="settingsOwner"><button class="btn primary" id="saveSettings" data-i18n="saveChanges">Сохранить изменения</button><hr><h3 data-i18n="dataManagement">Управление данными</h3><p class="muted" data-i18n="dataHint">Сделайте резервную копию или сбросьте демо-данные.</p><div class="button-row"><button class="btn secondary" id="exportData" data-i18n="exportBackup">Экспорт JSON</button><button class="btn danger" id="resetData" data-i18n="resetDemo">Сбросить демо</button></div></div>
+        </section>
+      </div>
+      <footer>© 2026 AZA BIZ PRO <span>BUILT FOR BUSINESS</span></footer>
+    </main>
+  </div>
+  <div id="modal" class="modal hidden"><div class="modal-card"><div class="modal-head"><h3 id="modalTitle"></h3><button id="closeModal" class="icon-btn">✕</button></div><div id="modalBody"></div></div></div>
+  <div id="toast" class="toast"></div>
+  <script src="./app.js"></script>
+</body>
+</html>
